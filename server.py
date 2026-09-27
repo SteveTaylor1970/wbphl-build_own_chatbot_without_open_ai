@@ -77,4 +77,4 @@ if __name__ == "__main__":
     logger.info("LLM and embeddings initialization complete.")
 
     # Start Flask application
-    app.run(host="0.0.0.0", port=8000)
+    app.run(host="0.0.0.0", port=8010)
