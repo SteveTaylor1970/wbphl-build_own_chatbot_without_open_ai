@@ -32,7 +32,7 @@ def init_llm():
     global llm_hub, embeddings
 
     # Set up the environment variable for HuggingFace
-    os.environ["HUGGINGFACEHUB_API_TOKEN"] = "blocked - use sjt_inference" 
+    #os.environ["HUGGINGFACEHUB_API_TOKEN"] = "blocked - use sjt_inference" 
 
     # Step 1: Create the base LLM using HuggingFaceEndpoint
     base_llm = HuggingFaceEndpoint ( 
