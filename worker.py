@@ -25,14 +25,16 @@ conversation_retrieval_chain = None
 chat_history = []
 llm_hub = None
 embeddings = None
+#
 
+def init_llm(hf_api_key=None):
 
-
-def init_llm():
     global llm_hub, embeddings
 
-    # Set up the environment variable for HuggingFace
-    os.environ["HUGGINGFACEHUB_API_TOKEN"] = "use sjt_inference" 
+    if hf_api_key:
+        # Set environment variable for Hugging Face libraries / LangChain
+        os.environ["HUGGINGFACEHUB_API_TOKEN"] = hf_api_key
+        # Or os.environ["HF_TOKEN"] = hf_api_key depending on the library version
 
     # Step 1: Create the base LLM using HuggingFaceEndpoint
     base_llm = HuggingFaceEndpoint ( 
@@ -147,5 +149,5 @@ def process_prompt(prompt):
     return answer
 
 # Initialize the language model
-init_llm()
-logger.info("LLM and embeddings initialization complete.")
+#init_llm()
+#logger.info("LLM and embeddings initialization complete.")

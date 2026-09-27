@@ -3,11 +3,18 @@ import os
 from flask import Flask, render_template, request, jsonify
 from flask_cors import CORS
 import worker  # Import the worker module
+import argparse
+import logging
+
 
 # Initialize Flask app and CORS
 app = Flask(__name__)
 cors = CORS(app, resources={r"/*": {"origins": "*"}})
 app.logger.setLevel(logging.ERROR)
+
+# Configure logging
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
 
 # Define the route for the index page
 @app.route('/', methods=['GET'])
@@ -51,5 +58,23 @@ def process_document_route():
     }), 200
 
 # Run the Flask app
+#if __name__ == "__main__":
+#    app.run(debug=True, port=8000, host='0.0.0.0')
+
+# python server.py --hf_api_key "your_hugging_face_api_key_here"
 if __name__ == "__main__":
-    app.run(debug=True, port=8000, host='0.0.0.0')
+    parser = argparse.ArgumentParser(description="Start the Chatbot Flask Server")
+    parser.add_argument(
+        "--hf_api_key", 
+        type=str, 
+        required=True, 
+        help="Hugging Face API key"
+    )
+    args = parser.parse_args()
+
+    # Initialize LLM with the provided API key
+    worker.init_llm(hf_api_key=args.hf_api_key)
+    logger.info("LLM and embeddings initialization complete.")
+
+    # Start Flask application
+    app.run(host="0.0.0.0", port=8000)
