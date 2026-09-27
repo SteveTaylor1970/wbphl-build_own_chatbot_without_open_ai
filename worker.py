@@ -8,7 +8,11 @@ logger = logging.getLogger(__name__)
 
 from langchain_core.prompts import PromptTemplate  # Updated import per deprecation notice
 from langchain.chains import RetrievalQA
-from langchain_huggingface import HuggingFaceEmbeddings
+from langchain_huggingface import (
+    HuggingFaceEndpoint,
+    HuggingFaceEmbeddings,
+    ChatHuggingFace
+)
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_community.vectorstores import Chroma
 from langchain_text_splitters import RecursiveCharacterTextSplitter
@@ -22,8 +26,36 @@ chat_history = []
 llm_hub = None
 embeddings = None
 
-# Function to initialize the language model and its embeddings
+
+
 def init_llm():
+    global llm_hub, embeddings
+
+    # Set up the environment variable for HuggingFace
+    os.environ["HUGGINGFACEHUB_API_TOKEN"] = "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"
+
+    # Step 1: Create the base LLM using HuggingFaceEndpoint
+    base_llm = HuggingFaceEndpoint ( 
+        repo_id="meta-llama/Llama-3.1-8B-Instruct",
+        task="text-generation",
+        huggingfacehub_api_token=os.environ["HUGGINGFACEHUB_API_TOKEN"],
+        temperature=0.1,
+        max_new_tokens=600
+    )
+
+    # Step 2: Wrap the base LLM with ChatHuggingFace for chat-based interaction
+    llm_hub = ChatHuggingFace(llm=base_llm)
+
+    # Initialize embeddings using a pre-trained sentence-transformer model
+    embeddings = HuggingFaceEmbeddings (
+        model_name="sentence-transformers/all-MiniLM-L6-v2",
+        model_kwargs={"device": DEVICE}
+    )
+
+
+
+# Function to initialize the language model and its embeddings
+def init_llm_save():
     global llm_hub, embeddings
 
     logger.info("Initializing ChatWatsonx and embeddings...")
